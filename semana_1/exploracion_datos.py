@@ -1,297 +1,267 @@
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "# Estadística Descriptiva con Python\n",
-    "## Curso de Introducción a la Estadística - Maestría en Ciencia de Datos\n",
-    "\n",
-    "En este notebook, exploraremos los conceptos fundamentales de la estadística descriptiva utilizando Python y sus principales bibliotecas para análisis de datos y visualización."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Importación de bibliotecas necesarias\n",
-    "import numpy as np\n",
-    "import pandas as pd\n",
-    "import matplotlib.pyplot as plt\n",
-    "import seaborn as sns\n",
-    "from scipy import stats\n",
-    "\n",
-    "# Configuración de estilo para las visualizaciones\n",
-    "plt.style.use('seaborn')\n",
-    "sns.set_palette('husl')"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 1. Variables Cualitativas y Cuantitativas\n",
-    "\n",
-    "### 1.1 Variables Cualitativas (Categóricas)\n",
-    "Vamos a crear un conjunto de datos de ejemplo para mostrar el análisis de variables cualitativas."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Crear datos de ejemplo para variables cualitativas\n",
-    "np.random.seed(42)\n",
-    "n_samples = 200\n",
-    "\n",
-    "# Variables nominales\n",
-    "colores = np.random.choice(['Rojo', 'Azul', 'Verde', 'Amarillo'], n_samples, p=[0.3, 0.3, 0.2, 0.2])\n",
-    "\n",
-    "# Variables ordinales\n",
-    "niveles_educativos = np.random.choice(['Primaria', 'Secundaria', 'Universidad', 'Posgrado'], \n",
-    "                                      n_samples, p=[0.2, 0.3, 0.35, 0.15])\n",
-    "\n",
-    "# Crear DataFrame\n",
-    "df_cualitativo = pd.DataFrame({\n",
-    "    'Color_Preferido': colores,\n",
-    "    'Nivel_Educativo': niveles_educativos\n",
-    "})\n",
-    "\n",
-    "# Mostrar las primeras filas\n",
-    "print(\"Muestra de datos cualitativos:\")\n",
-    "print(df_cualitativo.head())\n",
-    "\n",
-    "# Análisis de frecuencias\n",
-    "print(\"\\nTabla de frecuencias para Color Preferido:\")\n",
-    "print(df_cualitativo['Color_Preferido'].value_counts())"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Visualización de variables cualitativas\n",
-    "fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))\n",
-    "\n",
-    "# Gráfico de barras para Color Preferido\n",
-    "sns.countplot(data=df_cualitativo, x='Color_Preferido', ax=ax1)\n",
-    "ax1.set_title('Distribución de Colores Preferidos')\n",
-    "ax1.set_ylabel('Frecuencia')\n",
-    "plt.xticks(rotation=45)\n",
-    "\n",
-    "# Gráfico de barras para Nivel Educativo\n",
-    "sns.countplot(data=df_cualitativo, x='Nivel_Educativo', ax=ax2)\n",
-    "ax2.set_title('Distribución de Niveles Educativos')\n",
-    "ax2.set_ylabel('Frecuencia')\n",
-    "plt.xticks(rotation=45)\n",
-    "\n",
-    "plt.tight_layout()\n",
-    "plt.show()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### 1.2 Variables Cuantitativas\n",
-    "Ahora generaremos datos para mostrar el análisis de variables cuantitativas discretas y continuas."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Crear datos de ejemplo para variables cuantitativas\n",
-    "# Variable discreta: número de hijos\n",
-    "num_hijos = np.random.poisson(lam=2, size=n_samples)\n",
-    "\n",
-    "# Variables continuas\n",
-    "altura = np.random.normal(170, 10, n_samples)  # media 170, desv. est. 10\n",
-    "peso = np.random.normal(70, 15, n_samples)     # media 70, desv. est. 15\n",
-    "\n",
-    "# Crear DataFrame\n",
-    "df_cuantitativo = pd.DataFrame({\n",
-    "    'Num_Hijos': num_hijos,\n",
-    "    'Altura': altura,\n",
-    "    'Peso': peso\n",
-    "})\n",
-    "\n",
-    "# Estadísticas descriptivas\n",
-    "print(\"Estadísticas descriptivas de variables cuantitativas:\")\n",
-    "print(df_cuantitativo.describe())"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Visualización de variables cuantitativas\n",
-    "fig, axes = plt.subplots(2, 2, figsize=(15, 12))\n",
-    "\n",
-    "# Histograma de altura\n",
-    "sns.histplot(data=df_cuantitativo, x='Altura', bins=30, ax=axes[0,0])\n",
-    "axes[0,0].set_title('Distribución de Altura')\n",
-    "\n",
-    "# Histograma de peso\n",
-    "sns.histplot(data=df_cuantitativo, x='Peso', bins=30, ax=axes[0,1])\n",
-    "axes[0,1].set_title('Distribución de Peso')\n",
-    "\n",
-    "# Gráfico de barras para número de hijos (variable discreta)\n",
-    "sns.countplot(data=df_cuantitativo, x='Num_Hijos', ax=axes[1,0])\n",
-    "axes[1,0].set_title('Distribución de Número de Hijos')\n",
-    "\n",
-    "# Boxplot de variables continuas\n",
-    "df_cuantitativo.boxplot(column=['Altura', 'Peso'], ax=axes[1,1])\n",
-    "axes[1,1].set_title('Boxplots de Altura y Peso')\n",
-    "\n",
-    "plt.tight_layout()\n",
-    "plt.show()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 2. Función de Probabilidad de Masa (PMF)\n",
-    "Vamos a ilustrar la PMF usando el ejemplo del número de hijos (variable discreta)."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Calcular PMF para número de hijos\n",
-    "pmf_hijos = df_cuantitativo['Num_Hijos'].value_counts(normalize=True).sort_index()\n",
-    "\n",
-    "# Visualizar PMF\n",
-    "plt.figure(figsize=(10, 6))\n",
-    "plt.bar(pmf_hijos.index, pmf_hijos.values)\n",
-    "plt.title('Función de Probabilidad de Masa - Número de Hijos')\n",
-    "plt.xlabel('Número de Hijos')\n",
-    "plt.ylabel('Probabilidad')\n",
-    "plt.grid(True, alpha=0.3)\n",
-    "plt.show()\n",
-    "\n",
-    "print(\"Probabilidades para cada valor:\")\n",
-    "print(pmf_hijos)"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 3. Función de Densidad de Probabilidad (PDF)\n",
-    "Ilustraremos la PDF usando la altura (variable continua) y compararemos con una distribución normal teórica."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Calcular PDF empírica y teórica\n",
-    "altura_mean = df_cuantitativo['Altura'].mean()\n",
-    "altura_std = df_cuantitativo['Altura'].std()\n",
-    "\n",
-    "# Crear puntos para la curva teórica\n",
-    "x = np.linspace(altura_mean - 4*altura_std, altura_mean + 4*altura_std, 100)\n",
-    "pdf_teorica = stats.norm.pdf(x, altura_mean, altura_std)\n",
-    "\n",
-    "# Visualizar PDF\n",
-    "plt.figure(figsize=(10, 6))\n",
-    "sns.histplot(data=df_cuantitativo, x='Altura', stat='density', bins=30, alpha=0.5)\n",
-    "plt.plot(x, pdf_teorica, 'r-', lw=2, label='PDF teórica (Normal)')\n",
-    "plt.title('Función de Densidad de Probabilidad - Altura')\n",
-    "plt.xlabel('Altura (cm)')\n",
-    "plt.ylabel('Densidad')\n",
-    "plt.legend()\n",
-    "plt.grid(True, alpha=0.3)\n",
-    "plt.show()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 4. Función de Distribución Acumulada (CDF)\n",
-    "Mostraremos la CDF tanto para variables discretas como continuas."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# CDF para variable discreta (número de hijos)\n",
-    "cdf_hijos = df_cuantitativo['Num_Hijos'].value_counts(normalize=True).sort_index().cumsum()\n",
-    "\n",
-    "# CDF para variable continua (altura)\n",
-    "altura_sorted = np.sort(df_cuantitativo['Altura'])\n",
-    "p = np.arange(len(altura_sorted)) / (len(altura_sorted) - 1)\n",
-    "\n",
-    "# Visualizar CDFs\n",
-    "fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))\n",
-    "\n",
-    "# CDF discreta\n",
-    "ax1.step(cdf_hijos.index, cdf_hijos.values, where='post')\n",
-    "ax1.set_title('CDF - Número de Hijos')\n",
-    "ax1.set_xlabel('Número de Hijos')\n",
-    "ax1.set_ylabel('Probabilidad Acumulada')\n",
-    "ax1.grid(True, alpha=0.3)\n",
-    "\n",
-    "# CDF continua\n",
-    "ax2.plot(altura_sorted, p)\n",
-    "ax2.set_title('CDF - Altura')\n",
-    "ax2.set_xlabel('Altura (cm)')\n",
-    "ax2.set_ylabel('Probabilidad Acumulada')\n",
-    "ax2.grid(True, alpha=0.3)\n",
-    "\n",
-    "plt.tight_layout()\n",
-    "plt.show()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 5. Probabilidad en Estadística\n",
-    "Vamos a ilustrar algunos conceptos básicos de probabilidad usando nuestros datos."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "source": [
-    "# Calcular algunas probabilidades de ejemplo\n",
-    "\n",
-    "# Probabilidad de tener más de 2 hijos\n",
-    "p_mas_2_hijos = (df_cuantitativo['Num_Hijos'] > 2).mean()\n",
-    "\n",
-    "# Probabilidad de tener altura entre 160 y 180 cm\n",
-    "p_altura_rango = ((df_cuantitativo['Altura'] >= 160) & \n",
-    "                  (df_cuantitativo['Altura'] <= 180)).mean()\n",
-    "\n",
-    "print(f\"Probabilidad de tener más de 2 hijos: {p_mas_2_hijos:.3f}\")\n",
-    "print(f\"Probabilidad de tener altura entre 160 y 180 cm: {p_altura_rango:.3f}\")\n",
-    "\n",
-    "# Visualizar estas probabilidades\n",
-    "plt.figure(figsize=(10, 6))\n",
-    "sns.histplot(data=df_cuantitativo, x='Altura', bins=30)\n",
-    "plt.axvline(x=160, color='r', linestyle='--', label='Límite inferior (160 cm)')\n",
-    "plt.axvline(x=180, color='r', linestyle='--', label='Límite superior (180 cm)')\n",
-    "plt.title('Distribución de Altura con Rango de Interés')\n",
-    "plt.xlabel('Altura (cm)')\n",
-    "plt.ylabel('Frecuencia')\n",
-    "plt.legend()\n",
-    "plt.show()"
-   ]
-  },
- ]
+# %% [markdown]
+# # Introducción a la Estadística Descriptiva
+# ## Curso de Maestría en Ciencia de Datos
+
+# %% [markdown]
+# ### Introducción
+# 
+# La estadística descriptiva es una rama fundamental de la estadística que se ocupa de la recolección, organización, análisis y presentación de datos. En esta era de información masiva, la capacidad de comprender y describir datos de manera efectiva se ha vuelto una habilidad esencial para cualquier científico de datos.
+# 
+# A diferencia de la estadística inferencial, que busca hacer predicciones y generalizaciones sobre una población basándose en una muestra, la estadística descriptiva se centra en describir y resumir las características principales de un conjunto de datos.
+# 
+# En el mundo actual, donde la toma de decisiones basada en datos se ha convertido en un estándar en prácticamente todas las industrias, la capacidad de entender y aplicar conceptos estadísticos es más importante que nunca.
+
+# %%
+# Importación de librerías necesarias
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+import warnings
+warnings.filterwarnings('ignore')
+
+# Configuración de estilo para las visualizaciones
+plt.style.use('seaborn')
+sns.set_palette("husl")
+
+# %% [markdown]
+# ### 1. Variables Cualitativas y Cuantitativas
+# 
+# El primer paso para cualquier análisis estadístico es comprender la naturaleza de los datos con los que estamos trabajando. La clasificación de variables en cualitativas y cuantitativas es fundamental porque determina qué tipos de análisis y visualizaciones son apropiados para nuestros datos.
+# 
+# #### 1.1 Variables Cualitativas (Categóricas)
+# 
+# * **Nominales:**
+#   - No tienen un orden natural
+#   - Ejemplos: género, color de ojos, nacionalidad
+#   - Operaciones permitidas: igual a (=) o diferente de (≠)
+#   - Medidas descriptivas: moda, frecuencias
+# 
+# * **Ordinales:**
+#   - Tienen un orden o ranking natural
+#   - Ejemplos: nivel educativo, satisfacción del cliente
+#   - Operaciones permitidas: mayor que (>), menor que (<), igual a (=)
+#   - Medidas descriptivas: mediana, moda, frecuencias
+# 
+# #### 1.2 Variables Cuantitativas (Numéricas)
+# 
+# * **Discretas:**
+#   - Toman valores enteros o contables
+#   - Ejemplos: número de hijos, número de estudiantes
+#   - Medidas descriptivas: media, mediana, moda, varianza
+# 
+# * **Continuas:**
+#   - Pueden tomar cualquier valor dentro de un intervalo
+#   - Ejemplos: altura, peso, temperatura
+#   - Medidas descriptivas: media, mediana, moda, varianza, desviación estándar
+
+# %%
+# Crear datos de ejemplo
+np.random.seed(42)
+n_students = 200
+data = {
+    'edad': np.random.normal(20, 2, n_students),  # Cuantitativa continua
+    'semestre': np.random.randint(1, 11, n_students),  # Cuantitativa discreta
+    'genero': np.random.choice(['M', 'F'], n_students),  # Cualitativa nominal
+    'nivel_satisfaccion': np.random.choice(['Bajo', 'Medio', 'Alto'], n_students),  # Cualitativa ordinal
+    'num_cursos': np.random.poisson(3, n_students)  # Cuantitativa discreta
 }
+
+df = pd.DataFrame(data)
+
+# Mostrar información sobre las variables
+print("Análisis de Variables:")
+print("\nVariables Cuantitativas:")
+print(df.describe())
+    
+print("\nVariables Cualitativas:")
+for col in ['genero', 'nivel_satisfaccion']:
+    print(f"\nDistribución de {col}:")
+    print(df[col].value_counts())
+
+# %% [markdown]
+# ### 2. Histogramas y Distribuciones
+# 
+# La visualización de datos es una herramienta poderosa en estadística descriptiva. Los histogramas y otras representaciones gráficas nos permiten "ver" patrones en los datos que podrían no ser evidentes en una tabla de números.
+# 
+# #### 2.1 Visualización de Variables Cualitativas
+# * Gráficos de barras
+# * Gráficos circulares
+# 
+# #### 2.2 Visualización de Variables Cuantitativas
+# * Histogramas
+# * Polígonos de frecuencia
+
+# %%
+# Crear visualizaciones
+fig = plt.figure(figsize=(15, 10))
+
+# Gráfico de barras para género
+plt.subplot(2, 2, 1)
+sns.countplot(data=df, x='genero')
+plt.title('Distribución por Género')
+
+# Gráfico de barras para nivel de satisfacción
+plt.subplot(2, 2, 2)
+sns.countplot(data=df, x='nivel_satisfaccion')
+plt.title('Distribución por Nivel de Satisfacción')
+
+# Histograma para edad
+plt.subplot(2, 2, 3)
+sns.histplot(data=df, x='edad', kde=True)
+plt.title('Distribución de Edades')
+
+# Histograma para número de cursos
+plt.subplot(2, 2, 4)
+sns.histplot(data=df, x='num_cursos', kde=True)
+plt.title('Distribución de Número de Cursos')
+
+plt.tight_layout()
+plt.show()
+
+# %% [markdown]
+# ### 3. Función de Probabilidad de Masa (PMF)
+# 
+# La función de probabilidad de masa es un concepto fundamental en la teoría de probabilidad y estadística, especialmente cuando trabajamos con variables aleatorias discretas.
+# 
+# Características principales:
+# * Solo está definida para valores discretos
+# * P(X = x) ≥ 0 para todo x
+# * La suma de todas las probabilidades es 1
+
+# %%
+# Visualizar PMF
+# Ejemplo: Lanzamiento de un dado
+x = np.arange(1, 7)
+pmf = np.ones(6) / 6  # Probabilidad uniforme para cada resultado
+
+plt.figure(figsize=(10, 6))
+plt.bar(x, pmf)
+plt.title('PMF de un Dado Justo')
+plt.xlabel('Resultado')
+plt.ylabel('Probabilidad')
+plt.xticks(x)
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# Ejemplo con datos discretos reales
+plt.figure(figsize=(10, 6))
+sns.histplot(data=df, x='num_cursos', stat='probability')
+plt.title('PMF Empírica del Número de Cursos')
+plt.xlabel('Número de Cursos')
+plt.ylabel('Probabilidad')
+plt.show()
+
+# %% [markdown]
+# ### 4. Función de Densidad de Probabilidad (PDF)
+# 
+# La función de densidad de probabilidad es el equivalente continuo de la PMF. Mientras que la PMF nos da probabilidades exactas para valores discretos, la PDF nos da la "densidad" de probabilidad en cada punto de un continuo.
+# 
+# Características principales:
+# * Es una función continua
+# * El área bajo la curva es 1
+# * f(x) ≥ 0 para todo x
+# * P(a ≤ X ≤ b) = ∫[a,b] f(x)dx
+
+# %%
+# Visualizar PDF
+# Ejemplo teórico: Distribución Normal
+x = np.linspace(-4, 4, 1000)
+pdf = stats.norm.pdf(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, pdf, 'b-', label='PDF Teórica')
+plt.title('PDF de una Distribución Normal Estándar')
+plt.xlabel('x')
+plt.ylabel('Densidad')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.show()
+
+# Ejemplo con datos reales
+plt.figure(figsize=(10, 6))
+sns.kdeplot(data=df, x='edad')
+plt.title('PDF Empírica de las Edades')
+plt.xlabel('Edad')
+plt.ylabel('Densidad')
+plt.show()
+
+# %% [markdown]
+# ### 5. Función de Distribución Acumulada (CDF)
+# 
+# La función de distribución acumulada es una herramienta que nos permite calcular probabilidades para rangos de valores. Es especialmente útil cuando queremos saber la probabilidad de que una variable aleatoria sea menor o igual a un valor específico.
+# 
+# Propiedades:
+# 1. F(x) es monótona creciente
+# 2. lim(x→-∞) F(x) = 0
+# 3. lim(x→∞) F(x) = 1
+# 4. P(a < X ≤ b) = F(b) - F(a)
+
+# %%
+# Visualizar CDF
+# Ejemplo teórico: CDF Normal
+x = np.linspace(-4, 4, 1000)
+cdf = stats.norm.cdf(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, cdf, 'r-', label='CDF Teórica')
+plt.title('CDF de una Distribución Normal Estándar')
+plt.xlabel('x')
+plt.ylabel('Probabilidad Acumulada')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.show()
+
+# Ejemplo con datos reales
+plt.figure(figsize=(10, 6))
+sns.ecdfplot(data=df, x='edad')
+plt.title('CDF Empírica de las Edades')
+plt.xlabel('Edad')
+plt.ylabel('Probabilidad Acumulada')
+plt.show()
+
+# %% [markdown]
+# ### 6. Probabilidad en Estadística
+# 
+# La probabilidad es el lenguaje matemático de la incertidumbre. Estudiaremos:
+# 
+# * **Definiciones de Probabilidad:**
+#   - Clásica (Laplace)
+#   - Frecuentista
+#   - Axiomática (Kolmogorov)
+# 
+# * **Reglas Básicas:**
+#   - Regla de la Suma
+#   - Regla del Producto
+#   - Probabilidad Condicional
+
+# %%
+# Visualizar probabilidades
+# Probabilidad conjunta
+cont_table = pd.crosstab(df['genero'], df['nivel_satisfaccion'], normalize='all')
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(cont_table, annot=True, fmt='.3f', cmap='YlOrRd')
+plt.title('Probabilidades Conjuntas: Género vs Nivel de Satisfacción')
+plt.show()
+
+# Probabilidades condicionales
+cond_prob = pd.crosstab(df['genero'], df['nivel_satisfaccion'], normalize='index')
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(cond_prob, annot=True, fmt='.3f', cmap='YlGnBu')
+plt.title('Probabilidades Condicionales: P(Nivel de Satisfacción | Género)')
+plt.show()
+
+# %% [markdown]
+# ### Conclusión
+# 
+# La estadística descriptiva es mucho más que un conjunto de técnicas para resumir datos. Es un lenguaje fundamental para comunicar información cuantitativa y una herramienta esencial para la toma de decisiones basada en datos.
+# 
+# Los conceptos presentados en este material forman la base para análisis más avanzados y son esenciales para cualquier científico de datos.
+
+# %%
+# Guardar los datos de ejemplo
+df.to_csv('datos_ejemplo_estadistica.csv', index=False)
+print("Datos guardados en 'datos_ejemplo_estadistica.csv'")
